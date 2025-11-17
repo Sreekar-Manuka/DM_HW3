@@ -18,18 +18,18 @@ def run_base_models(data):
     """Q2c / Q2d: Evaluate PMF, User-CF, Item-CF with cosine similarity."""
     results = []
 
-    # PMF model via Surprise SVD
+    
     algo_pmf = SVD(random_state=42)
     mae_pmf, rmse_pmf = run_cv(algo_pmf, data)
     results.append(("PMF", mae_pmf, rmse_pmf))
 
-    # User-based CF, cosine
+    
     sim_user_cosine = {"name": "cosine", "user_based": True}
     algo_user = KNNBasic(k=40, sim_options=sim_user_cosine)
     mae_user, rmse_user = run_cv(algo_user, data)
     results.append(("User-CF", mae_user, rmse_user))
 
-    # Item-based CF, cosine
+    
     sim_item_cosine = {"name": "cosine", "user_based": False}
     algo_item = KNNBasic(k=40, sim_options=sim_item_cosine)
     mae_item, rmse_item = run_cv(algo_item, data)
@@ -42,23 +42,23 @@ def run_similarity_study(data):
     """Q2e: Study similarity metrics for User-CF and Item-CF."""
     similarities = ["cosine", "msd", "pearson"]
 
-    user_results = []  # (sim, mae, rmse)
-    item_results = []  # (sim, mae, rmse)
+    user_results = []  
+    item_results = []  
 
     for sim in similarities:
-        # User-based CF
+        
         sim_user = {"name": sim, "user_based": True}
         algo_user = KNNBasic(k=40, sim_options=sim_user)
         mae_user, rmse_user = run_cv(algo_user, data)
         user_results.append((sim, mae_user, rmse_user))
 
-        # Item-based CF
+        
         sim_item = {"name": sim, "user_based": False}
         algo_item = KNNBasic(k=40, sim_options=sim_item)
         mae_item, rmse_item = run_cv(algo_item, data)
         item_results.append((sim, mae_item, rmse_item))
 
-    # Prepare data for RMSE comparison table
+    
     rmse_table = []
     for sim in similarities:
         rmse_user = next(r[2] for r in user_results if r[0] == sim)
@@ -144,17 +144,11 @@ def save_report(
 
     lines.append("# Task 2 Report: Recommender Systems with scikit-surprise\n")
 
-    # Introduction
+    
     lines.append("## Introduction\n")
-    lines.append(
-        "This report evaluates collaborative filtering models on the "
-        "MovieLens `ratings_small.csv` dataset using the scikit-surprise "
-        "library. The dataset contains user–movie ratings on a 1–5 scale. "
-        "All experiments use 5-fold cross-validation and are reported in "
-        "terms of mean MAE and RMSE.\n"
-    )
+   
 
-    # Q2c/Q2d: Base models
+    
     lines.append("## Q2c — Base Models Evaluation\n")
     lines.append(
         format_markdown_table(
@@ -164,17 +158,16 @@ def save_report(
     )
     lines.append("")
 
-    # Best model (lowest RMSE)
+    
     best_base = min(base_results, key=lambda x: x[2])
     lines.append("## Q2d — Best Base Model\n")
     lines.append(
         f"The best-performing base model in terms of RMSE is **{best_base[0]}** "
         f"with RMSE = {best_base[2]:.4f} and MAE = {best_base[1]:.4f}. "
-        "This indicates that its predicted ratings are, on average, closest "
-        "to the true ratings among the three evaluated models.\n"
+       
     )
 
-    # Q2e: Similarity metrics study
+   
     lines.append("## Q2e — Similarity Metrics Study\n")
     lines.append("### RMSE Comparison for User-CF and Item-CF\n")
     lines.append(
@@ -188,27 +181,12 @@ def save_report(
     )
     lines.append("")
 
-    lines.append("The following bar plots visualize these results:\n")
-    lines.append("- **User-CF RMSE vs similarity**: `user_cf_similarity_rmse.png`\n")
-    lines.append("- **Item-CF RMSE vs similarity**: `item_cf_similarity_rmse.png`\n")
-
     best_user_sim = min(user_sim_results, key=lambda x: x[2])
     best_item_sim = min(item_sim_results, key=lambda x: x[2])
 
-    lines.append("\n### Interpretation\n")
-    lines.append(
-        f"For User-CF, the best similarity metric is **{best_user_sim[0]}** "
-        f"with RMSE = {best_user_sim[2]:.4f}. "
-        f"For Item-CF, the best similarity metric is **{best_item_sim[0]}** "
-        f"with RMSE = {best_item_sim[2]:.4f}. "
-        "These may differ because user-based and item-based neighborhood "
-        "structures respond differently to how similarity is computed. "
-        "For example, user rating patterns can be more sensitive to scale "
-        "shifts and sparsity than item rating profiles, which affects how "
-        "cosine, MSD, or Pearson similarity behaves.\n"
-    )
+    
 
-    # Q2f/Q2g: k-neighbors study
+    
     lines.append("## Q2f — Effect of Number of Neighbors k\n")
     lines.append(
         format_markdown_table(
@@ -221,16 +199,13 @@ def save_report(
     )
     lines.append("")
 
-    lines.append("The following line plots visualize these trends:\n")
-    lines.append("- **User-CF RMSE vs k**: `user_cf_k_rmse.png`\n")
-    lines.append("- **Item-CF RMSE vs k**: `item_cf_k_rmse.png`\n")
 
     best_k_user_index = int(np.argmin(user_k_rmse))
     best_k_item_index = int(np.argmin(item_k_rmse))
     k_user_star = k_values[best_k_user_index]
     k_item_star = k_values[best_k_item_index]
 
-    lines.append("\n## Q2g — Best k and Interpretation\n")
+    lines.append("\n## Q2g — Best k \n")
     lines.append(
         f"For User-CF, the best number of neighbors is **k = {k_user_star}** "
         f"with RMSE = {user_k_rmse[best_k_user_index]:.4f}. "
@@ -243,7 +218,7 @@ def save_report(
         "models depend on how many similar items exist for each movie.\n"
     )
 
-    # Final conclusion
+
     lines.append("\n## Final Conclusion\n")
 
     lines.append(
@@ -259,25 +234,17 @@ def save_report(
         f"- **Best k for User-CF**: k = {k_user_star}.\n"
         f"  \n- **Best k for Item-CF**: k = {k_item_star}.\n"
     )
-    lines.append(
-        "- **Observations**: The results illustrate that model choice, "
-        "similarity metric, and neighborhood size all have a noticeable "
-        "impact on predictive accuracy. Matrix factorization (PMF/SVD) often "
-        "achieves strong performance by capturing latent user–item factors, "
-        "while neighborhood-based methods are more sensitive to similarity "
-        "and k. In practice, these hyperparameters should be tuned on a "
-        "validation set to balance accuracy and computational cost.\n"
-    )
+   
 
     with open(report_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
 
 def main():
-    # Load dataset
+    
     data = load_ratings_dataset("ratings_small.csv")
 
-    # Q2c / Q2d: base models
+    
     base_results = run_base_models(data)
 
     print("Q2c — Base Models (5-fold CV)")
@@ -289,7 +256,7 @@ def main():
     )
     print("")
 
-    # Q2e: similarity study
+    
     user_sim_results, item_sim_results, sim_rmse_table = run_similarity_study(data)
     print("Q2e — Similarity Metrics Study (RMSE)")
     print(
@@ -303,7 +270,7 @@ def main():
     )
     print("")
 
-    # Q2f / Q2g: k-neighbors study
+    
     k_values, user_k_rmse, item_k_rmse, k_table_rows = run_k_neighbors_study(data)
     print("Q2f — Effect of k on RMSE")
     print(
@@ -317,8 +284,8 @@ def main():
     )
     print("")
 
-    # Save markdown report
-    print("Saving Task 2 report to task2_report.md ...")
+    
+    print("Saving Task 2 report to task2_report.md ")
     save_report(
         base_results,
         user_sim_results,

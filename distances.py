@@ -2,29 +2,13 @@ import numpy as np
 
 
 def euclidean_distance(x: np.ndarray, y: np.ndarray) -> float:
-    """Compute Euclidean (L2) distance between two 1D vectors.
-
-    Parameters
-    ----------
-    x, y : np.ndarray
-        1D numpy arrays of the same length.
-
-    Returns
-    -------
-    float
-        Euclidean distance between x and y.
-    """
+    """Compute Euclidean (L2) distance between two 1D vectors.  """
     diff = x - y
     return float(np.sqrt(np.dot(diff, diff)))
 
 
 def cosine_distance(x: np.ndarray, y: np.ndarray) -> float:
-    """Compute cosine distance = 1 - cosine similarity between two 1D vectors.
-
-    Handles zero vectors safely:
-    - If both vectors are all zeros, distance is defined as 0.0.
-    - If one is zero and the other is non-zero, distance is defined as 1.0.
-    """
+    """Compute cosine distance = 1 - cosine similarity between two 1D vectors. """
     x_norm = np.linalg.norm(x)
     y_norm = np.linalg.norm(y)
 
@@ -40,18 +24,8 @@ def cosine_distance(x: np.ndarray, y: np.ndarray) -> float:
 
 
 def generalized_jaccard_distance(x: np.ndarray, y: np.ndarray) -> float:
-    """Compute generalized Jaccard distance for non-negative numeric vectors.
-
-    Jaccard similarity is defined as:
-        sum(min(x_i, y_i)) / sum(max(x_i, y_i))
-
-    Distance = 1 - similarity.
-
-    If both vectors are all zeros (denominator = 0), we define similarity = 1
-    => distance = 0.
-    """
-    # Ensure non-negative; if dataset can contain negatives, this could be
-    # relaxed or handled differently, but here we assume non-negative inputs.
+    """Compute generalized Jaccard distance for non-negative numeric vectors."""
+    
     x_nonneg = np.maximum(x, 0.0)
     y_nonneg = np.maximum(y, 0.0)
 
@@ -59,7 +33,7 @@ def generalized_jaccard_distance(x: np.ndarray, y: np.ndarray) -> float:
     max_sum = float(np.sum(np.maximum(x_nonneg, y_nonneg)))
 
     if max_sum == 0.0:
-        # Both are effectively zero vectors
+       
         return 0.0
 
     similarity = min_sum / max_sum

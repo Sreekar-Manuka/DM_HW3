@@ -61,7 +61,7 @@ def _update_centroids(
     for k in range(K):
         members = X[labels == k]
         if len(members) == 0:
-            # Reinitialize to a random sample
+            
             idx = rng.randint(0, X.shape[0])
             centroids[k] = X[idx]
         else:
@@ -94,38 +94,7 @@ def kmeans(
     tol: float = 1e-4,
     random_state: int = 42,
 ) -> Tuple[np.ndarray, np.ndarray, float, int, float]:
-    """Run K-means clustering.
-
-    Parameters
-    ----------
-    X : np.ndarray
-        Data matrix of shape (n_samples, n_features).
-    K : int
-        Number of clusters.
-    distance_func : callable
-        Function that takes two 1D vectors and returns a scalar distance.
-    max_iter : int, default 500
-        Maximum number of iterations.
-    stop_mode : {"no_change", "sse_increase", "combined", "fixed"}
-        Stopping condition mode.
-    tol : float, default 1e-4
-        Tolerance for centroid movement in "no_change" and "combined" modes.
-    random_state : int, default 42
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    centroids : np.ndarray
-        Final centroids of shape (K, n_features).
-    labels : np.ndarray
-        Cluster assignment for each sample, shape (n_samples,).
-    final_sse : float
-        SSE of the final clustering.
-    n_iter : int
-        Number of iterations executed.
-    total_time : float
-        Wall-clock time taken in seconds.
-    """
+    """Run K-means clustering. """
     start_time = time.time()
 
     centroids = _initialize_centroids(X, K, random_state=random_state)
@@ -135,18 +104,18 @@ def kmeans(
     for it in range(1, max_iter + 1):
         old_centroids = centroids.copy()
 
-        # Update step
+        
         centroids = _update_centroids(X, labels, K, random_state=random_state)
 
-        # Assignment step
+        
         labels = _assign_clusters(X, centroids, distance_func)
 
-        # Compute SSE
+        
         sse = _compute_sse(X, labels, centroids, distance_func)
 
-        # Check stopping conditions
+        
         if stop_mode == "fixed":
-            # Ignore all conditions, run exactly max_iter iterations
+            
             if it == max_iter:
                 prev_sse = sse
                 break
@@ -157,7 +126,7 @@ def kmeans(
                 break
         elif stop_mode == "sse_increase":
             if sse > prev_sse:
-                # Revert to previous centroids/labels/SSE
+                
                 centroids = old_centroids
                 sse = prev_sse
                 break

@@ -18,7 +18,7 @@ def load_data() -> Tuple[np.ndarray, np.ndarray]:
     np.random.seed(42)
     X = np.loadtxt("data.csv", delimiter=",")
     y = np.loadtxt("label.csv", delimiter=",")
-    # Ensure correct shapes
+    
     X = X.reshape(10000, 784)
     y = y.reshape(10000,)
     return X, y
@@ -86,7 +86,7 @@ def run_q4(
     results = []
 
     for name, dist_func in metrics.items():
-        # no_change
+        
         _, _, sse_no_change, _, _ = kmeans(
             X,
             K,
@@ -97,7 +97,7 @@ def run_q4(
             random_state=42,
         )
 
-        # sse_increase
+        
         _, _, sse_sse_increase, _, _ = kmeans(
             X,
             K,
@@ -108,7 +108,7 @@ def run_q4(
             random_state=42,
         )
 
-        # fixed 100 iterations
+        
         _, _, sse_fixed, _, _ = kmeans(
             X,
             K,
@@ -232,8 +232,7 @@ def save_report(
     # Q5 summary
     lines.append("\n## Q5 — Final Summary\n")
 
-    # Overall best metric (combine SSE and accuracy by ranking)
-    # This is heuristic: prioritize accuracy, tie-breaker by SSE.
+
     metrics = {}
     for m, sse, _ in q1_results:
         metrics.setdefault(m, {})["sse"] = sse
@@ -250,7 +249,7 @@ def save_report(
         f"- **Fastest converging metric**: {fastest[0]} based on wall-clock time.\n"
     )
 
-    # Best stopping condition: smallest SSE across all metrics/modes
+    
     flat_q4 = []
     for m, s1, s2, s3 in q4_results:
         flat_q4.append((m, "no_change", s1))
@@ -261,17 +260,6 @@ def save_report(
     lines.append(
         "- **Best stopping condition (by SSE)**: "
         f"{best_stop[1]} with metric {best_stop[0]} (SSE = {best_stop[2]:.4f}).\n"
-    )
-
-    lines.append(
-        "- **Patterns and trade-offs**: Generally, lower SSE correlates with higher "
-        "accuracy, but not perfectly. Cosine and Jaccard distances may capture "
-        "different structure in the data compared to Euclidean distance, leading "
-        "to different convergence speeds and final cluster quality. The "
-        "no-change and combined criteria tend to provide more stable SSE, whereas "
-        "the SSE-increase mode can stop earlier when over-optimizing starts to "
-        "increase error. Fixed-iteration runs ignore data-driven convergence and "
-        "can yield higher SSE if convergence requires more than 100 iterations.\n"
     )
 
     with open(report_path, "w", encoding="utf-8") as f:
@@ -311,7 +299,7 @@ def main():
         )
     )
 
-    print("\nSaving report to task1_report.md ...")
+    print("\nSaving report to task1_report.md ")
     save_report(q1_results, q2_results, q3_results, q4_results)
     print("Done.")
 
