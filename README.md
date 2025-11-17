@@ -22,6 +22,7 @@ Also when running task 2 please make sure to activate the conda environment
 
 To run the code, use the following commands :
 Task 1 : python task1_main.py
-Task 2 : python Task2/task2_main.py
+Task 2 : python task2_main.py
 
-Run both the tasks main python file from project root directory.
+Run  task 1 main python file from project root directory.
+Run  task 2 main python file from Task2 directory.
